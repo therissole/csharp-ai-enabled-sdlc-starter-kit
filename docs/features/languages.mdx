@@ -1,0 +1,147 @@
+---
+title: Languages Feature
+description: 'Manage languages in the system'
+---
+
+# Languages Feature
+
+The Languages feature allows you to manage a catalog of languages in the system. It provides full CRUD (Create, Read, Update, Delete) operations.
+
+## Overview
+
+Languages are the foundation for the greetings feature. Each language has:
+- A unique identifier (UUID)
+- A human-readable name (e.g., "English")
+- A language code (e.g., "en")
+- Timestamps for creation and updates
+
+## Use Cases
+
+- Add new languages to support additional greetings
+- Update language information
+- List all available languages
+- Retrieve specific language details
+- Remove languages (will cascade delete associated greetings)
+
+## Data Model
+
+```csharp
+public record Language
+{
+    public Guid Id { get; init; }
+    public string Name { get; init; }
+    public string Code { get; init; }
+    public DateTime CreatedAt { get; init; }
+    public DateTime UpdatedAt { get; init; }
+}
+```
+
+## Request/Response DTOs
+
+### CreateLanguageRequest
+```csharp
+public record CreateLanguageRequest(string Name, string Code);
+```
+
+### UpdateLanguageRequest
+```csharp
+public record UpdateLanguageRequest(string Name, string Code);
+```
+
+### LanguageResponse
+```csharp
+public record LanguageResponse(
+    Guid Id,
+    string Name,
+    string Code,
+    DateTime CreatedAt,
+    DateTime UpdatedAt
+);
+```
+
+## Example Usage
+
+### Create a Language
+```bash
+curl -X POST http://localhost:8080/api/languages \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "French",
+    "code": "fr"
+  }'
+```
+
+Response:
+```json
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "name": "French",
+  "code": "fr",
+  "createdAt": "2024-01-15T10:30:00Z",
+  "updatedAt": "2024-01-15T10:30:00Z"
+}
+```
+
+### List All Languages
+```bash
+curl http://localhost:8080/api/languages
+```
+
+Response:
+```json
+[
+  {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "name": "English",
+    "code": "en",
+    "createdAt": "2024-01-15T10:00:00Z",
+    "updatedAt": "2024-01-15T10:00:00Z"
+  },
+  {
+    "id": "7fb12a51-8934-4a12-9d5f-1f876c59e421",
+    "name": "Spanish",
+    "code": "es",
+    "createdAt": "2024-01-15T10:15:00Z",
+    "updatedAt": "2024-01-15T10:15:00Z"
+  }
+]
+```
+
+## Implementation Details
+
+The Languages feature is implemented using:
+- **Repository Pattern** - `LanguageRepository` handles all data access
+- **Dapper** - Lightweight ORM for efficient SQL queries
+- **Minimal APIs** - Clean, functional endpoint definitions
+
+### Logging
+All operations are logged with structured logging:
+```csharp
+logger.LogInformation("Creating language with code {LanguageCode}", request.Code);
+logger.LogInformation("Updated language with id {LanguageId}", id);
+```
+
+### Validation
+Basic validation ensures:
+- Name and Code are not empty
+- Database constraints enforce uniqueness
+
+## Testing
+
+The feature includes comprehensive tests:
+
+### Unit Tests
+- Constructor validation
+- Parameter validation
+
+### Integration Tests
+- CRUD operations with real database
+- Unique constraint validation
+
+### E2E Tests
+- Complete workflows via HTTP API
+- Referential integrity with greetings
+
+## API Reference
+
+For detailed API documentation, see [Languages API Reference](/api-reference/languages).

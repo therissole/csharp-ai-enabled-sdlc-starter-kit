@@ -1,0 +1,45 @@
+bin/
+obj/
+*.user
+*.suo
+*.userprefs
+.DS_Store
+*.swp
+*.swo
+*~
+.vs/
+.vscode/
+*.DotSettings.user
+TestResults/
+*.trx
+
+# Rider
+.idea/
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+project.lock.json
+project.fragment.lock.json
+
+# Test results
+TestResult.xml
+coverage.xml
+*.coverage
+
+# Temporary files
+*.log
+*.tmp
+/tmp/

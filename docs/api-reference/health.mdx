@@ -1,0 +1,64 @@
+---
+title: Health API
+description: 'Health check endpoints'
+---
+
+# Health Check API
+
+The health endpoint provides a way to monitor the application's health status, including database connectivity.
+
+## GET /api/health
+
+Check the health status of the application.
+
+### Response
+
+<ResponseField name="status" type="string">
+  The health status: "Healthy" or "Unhealthy"
+</ResponseField>
+
+<ResponseField name="database" type="string">
+  Database connection status: "Connected" or error message
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the health check
+</ResponseField>
+
+### Example Response (Healthy)
+
+```json
+{
+  "status": "Healthy",
+  "database": "Connected",
+  "timestamp": "2024-01-15T10:00:00.000Z"
+}
+```
+
+### Example Response (Unhealthy)
+
+```json
+{
+  "status": "Unhealthy",
+  "database": "Error: Connection refused",
+  "timestamp": "2024-01-15T10:00:00.000Z"
+}
+```
+
+### Status Codes
+
+- `200 OK` - Application is healthy
+- `503 Service Unavailable` - Application is unhealthy
+
+### Example Request
+
+```bash
+curl http://localhost:8080/api/health
+```
+
+### Use Cases
+
+- **Container Health Checks** - Docker/Kubernetes readiness probes
+- **Load Balancer Checks** - Determine if instance should receive traffic
+- **Monitoring** - External monitoring systems
+- **Debugging** - Verify database connectivity during troubleshooting
