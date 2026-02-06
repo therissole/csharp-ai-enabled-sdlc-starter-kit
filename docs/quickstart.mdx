@@ -1,0 +1,106 @@
+---
+title: Quick Start
+description: 'Get started with the C# AI-Enabled SDLC Starter Kit'
+---
+
+# Quick Start Guide
+
+This guide will help you get the application running locally in just a few minutes.
+
+## Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- [Docker](https://www.docker.com/get-started) and Docker Compose
+- [.NET 9 SDK](https://dotnet.microsoft.com/download) (for local development)
+- [Git](https://git-scm.com/)
+
+## Running with Docker
+
+The easiest way to get started is using Docker Compose:
+
+```bash
+# Clone the repository
+git clone https://github.com/therissole/csharp-ai-enabled-sdlc-starter-kit.git
+cd csharp-ai-enabled-sdlc-starter-kit
+
+# Start all services
+docker-compose up -d
+
+# Wait for services to start (about 30 seconds)
+# Check the API health
+curl http://localhost:8080/api/health
+```
+
+This will start:
+- PostgreSQL database on port 5432
+- Flyway migration runner (runs once)
+- API application on port 8080
+
+## Exploring the API
+
+Once running, you can explore the API:
+
+### Health Check
+```bash
+curl http://localhost:8080/api/health
+```
+
+### List all languages
+```bash
+curl http://localhost:8080/api/languages
+```
+
+### Get a greeting
+```bash
+curl http://localhost:8080/api/greetings/by-language/en
+```
+
+### OpenAPI/Swagger (Development mode)
+Visit: http://localhost:8080/openapi/v1.json
+
+## Running Locally for Development
+
+For local development without Docker:
+
+```bash
+# Start PostgreSQL (with Docker)
+docker run -d \
+  --name postgres \
+  -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_DB=starterkit \
+  -p 5432:5432 \
+  postgres:16-alpine
+
+# Run Flyway migrations
+docker run --rm \
+  --network host \
+  -v $(pwd)/db/migrations:/flyway/sql \
+  flyway/flyway:10-alpine \
+  -url=jdbc:postgresql://localhost:5432/starterkit \
+  -user=postgres \
+  -password=postgres \
+  migrate
+
+# Run the application
+cd src/StarterKit.Api
+dotnet run
+```
+
+## Running Tests
+
+```bash
+# Run all tests
+dotnet test
+
+# Run specific test project
+dotnet test tests/unit/StarterKit.UnitTests/StarterKit.UnitTests.csproj
+dotnet test tests/integration/StarterKit.IntegrationTests/StarterKit.IntegrationTests.csproj
+dotnet test tests/e2e/StarterKit.E2ETests/StarterKit.E2ETests.csproj
+```
+
+## Next Steps
+
+- Read about the [Architecture](/architecture)
+- Explore the [Languages Feature](/features/languages)
+- Check out the [API Reference](/api-reference/languages)

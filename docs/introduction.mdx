@@ -1,0 +1,65 @@
+---
+title: Introduction
+description: 'Welcome to the C# AI-Enabled SDLC Starter Kit'
+---
+
+# C# AI-Enabled SDLC Starter Kit
+
+A comprehensive starter project for C# applications that demonstrates best practices for modern software development with AI-assisted workflows.
+
+## Features
+
+This starter kit includes:
+
+- **RESTful API** - Built with ASP.NET Core minimal APIs
+- **Vertical Slice Architecture** - Following Jimmy Bogard's principles for maintainable code organization
+- **PostgreSQL Database** - Enterprise-grade relational database
+- **Flyway Migrations** - Automated database schema management
+- **Dapper** - Lightweight ORM for data access
+- **Comprehensive Testing** - Unit, integration, and E2E tests using NUnit
+- **Docker Support** - Containerized deployment with docker-compose
+- **OpenTelemetry** - Distributed tracing and observability
+- **Serilog** - Structured logging
+- **Health Checks** - Database connectivity monitoring
+- **Feature Flags** - Microsoft Feature Management
+- **CI/CD Pipeline** - GitHub Actions workflow with automated testing
+
+## Quick Start
+
+Get started with the starter kit in just a few steps:
+
+```bash
+# Clone the repository
+git clone https://github.com/therissole/csharp-ai-enabled-sdlc-starter-kit.git
+cd csharp-ai-enabled-sdlc-starter-kit
+
+# Start the application with Docker
+docker-compose up
+
+# The API will be available at http://localhost:8080
+```
+
+Visit the [Quick Start](/quickstart) guide for detailed instructions.
+
+## Architecture
+
+The application follows **Vertical Slice Architecture**, organizing code by features rather than technical layers. Each feature is self-contained with its own:
+
+- Models
+- Repository
+- Endpoints
+- Tests
+
+Learn more in the [Architecture](/architecture) documentation.
+
+## Sample Features
+
+The starter kit includes two sample features to demonstrate the architecture:
+
+### Languages
+Manage a catalog of languages with CRUD operations.
+
+### Greetings
+Store and retrieve greetings in different languages with referential integrity.
+
+See the [Features](/features/languages) section for more details.
