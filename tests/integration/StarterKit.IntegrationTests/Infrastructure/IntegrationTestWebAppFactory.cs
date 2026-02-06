@@ -48,14 +48,41 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>
         await using var connection = new NpgsqlConnection(connectionString);
         await connection.OpenAsync();
 
+        // Find the solution root directory
+        var currentDir = Directory.GetCurrentDirectory();
+        var solutionRoot = FindSolutionRoot(currentDir);
+        
+        if (solutionRoot == null)
+        {
+            throw new InvalidOperationException("Could not find solution root directory");
+        }
+
+        var migrationsPath = Path.Combine(solutionRoot, "db", "migrations");
+        
         // Apply migrations from SQL files
-        var migration1 = await File.ReadAllTextAsync("../../../../db/migrations/V1__create_languages_table.sql");
+        var migration1Path = Path.Combine(migrationsPath, "V1__create_languages_table.sql");
+        var migration1 = await File.ReadAllTextAsync(migration1Path);
         await using var cmd1 = new NpgsqlCommand(migration1, connection);
         await cmd1.ExecuteNonQueryAsync();
 
-        var migration2 = await File.ReadAllTextAsync("../../../../db/migrations/V2__create_greetings_table.sql");
+        var migration2Path = Path.Combine(migrationsPath, "V2__create_greetings_table.sql");
+        var migration2 = await File.ReadAllTextAsync(migration2Path);
         await using var cmd2 = new NpgsqlCommand(migration2, connection);
         await cmd2.ExecuteNonQueryAsync();
+    }
+
+    private string? FindSolutionRoot(string startDir)
+    {
+        var dir = new DirectoryInfo(startDir);
+        while (dir != null)
+        {
+            if (dir.GetFiles("*.sln*").Length > 0 || dir.GetDirectories("db").Length > 0)
+            {
+                return dir.FullName;
+            }
+            dir = dir.Parent;
+        }
+        return null;
     }
 
     public async Task StopAsync()
