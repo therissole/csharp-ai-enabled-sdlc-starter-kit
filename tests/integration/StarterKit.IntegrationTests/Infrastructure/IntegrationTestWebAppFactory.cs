@@ -76,7 +76,12 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>
         var dir = new DirectoryInfo(startDir);
         while (dir != null)
         {
-            if (dir.GetFiles("*.sln*").Length > 0 || dir.GetDirectories("db").Length > 0)
+            // Look for solution file (.sln or .slnx) and db/migrations directory
+            var hasSolution = dir.GetFiles("*.sln").Length > 0 || dir.GetFiles("*.slnx").Length > 0;
+            var hasDbMigrations = dir.GetDirectories("db").Any(d => 
+                Directory.Exists(Path.Combine(d.FullName, "migrations")));
+            
+            if (hasSolution && hasDbMigrations)
             {
                 return dir.FullName;
             }
