@@ -1,0 +1,194 @@
+---
+title: Architecture
+description: 'Understanding the Vertical Slice Architecture'
+---
+
+# Architecture Overview
+
+This starter kit uses **Vertical Slice Architecture**, a pattern popularized by Jimmy Bogard that organizes code by features rather than technical layers.
+
+## Why Vertical Slice Architecture?
+
+Traditional layered architecture (Controller → Service → Repository) can lead to:
+- Code scattered across multiple folders for a single feature
+- Tight coupling between layers
+- Difficulty in understanding feature boundaries
+- Challenges when features need different patterns
+
+Vertical Slice Architecture solves these by:
+- **Grouping related code together** - All code for a feature lives in one place
+- **Reducing coupling** - Features are independent and can evolve separately
+- **Improving discoverability** - Easy to find all code related to a feature
+- **Enabling flexibility** - Each feature can use the patterns that suit it best
+
+## Project Structure
+
+```
+src/
+  StarterKit.Api/
+    Features/
+      Languages/           # Language feature slice
+        Language.cs        # Models and DTOs
+        LanguageRepository.cs
+        LanguageEndpoints.cs
+      Greetings/          # Greeting feature slice
+        Greeting.cs
+        GreetingRepository.cs
+        GreetingEndpoints.cs
+      Health/             # Health check feature
+        HealthEndpoints.cs
+    Infrastructure/       # Shared infrastructure
+      IDbConnectionFactory.cs
+    Program.cs
+
+tests/
+  unit/                   # Unit tests
+  integration/            # Integration tests
+  e2e/                    # End-to-end tests
+
+db/
+  migrations/             # Flyway database migrations
+```
+
+## Feature Structure
+
+Each feature slice typically contains:
+
+1. **Models** - Domain models and DTOs
+2. **Repository** - Data access logic using Dapper
+3. **Endpoints** - Minimal API endpoints
+
+### Example: Languages Feature
+
+```csharp
+// Language.cs - Models
+public record Language { ... }
+public record CreateLanguageRequest(...);
+public record LanguageResponse(...);
+
+// LanguageRepository.cs - Data Access
+public interface ILanguageRepository { ... }
+public class LanguageRepository : ILanguageRepository { ... }
+
+// LanguageEndpoints.cs - API Endpoints
+public static class LanguageEndpoints
+{
+    public static RouteGroupBuilder MapLanguageEndpoints(this RouteGroupBuilder group)
+    {
+        group.MapGet("/", GetAllLanguages);
+        group.MapPost("/", CreateLanguage);
+        // ...
+    }
+}
+```
+
+## Technology Stack
+
+### Core Technologies
+- **ASP.NET Core** - Web framework with minimal APIs
+- **PostgreSQL** - Database
+- **Dapper** - Micro-ORM for data access
+- **Flyway** - Database migrations
+
+### Observability
+- **Serilog** - Structured logging
+- **OpenTelemetry** - Distributed tracing
+- **Health Checks** - Monitoring application health
+
+### Testing
+- **NUnit** - Test framework
+- **Testcontainers** - Integration testing with real databases
+- **WebApplicationFactory** - API testing
+
+### DevOps
+- **Docker** - Containerization
+- **GitHub Actions** - CI/CD pipeline
+- **Mintlify** - Documentation
+
+## Database Design
+
+The database uses:
+- **UUID primary keys** - For distributed systems and security
+- **Referential integrity** - Foreign key constraints with CASCADE deletes
+- **Timestamps** - created_at and updated_at for auditing
+
+### Schema
+
+```sql
+-- Languages table
+CREATE TABLE languages (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(100) NOT NULL UNIQUE,
+    code VARCHAR(10) NOT NULL UNIQUE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Greetings table with FK to languages
+CREATE TABLE greetings (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    language_id UUID NOT NULL,
+    greeting_text VARCHAR(255) NOT NULL,
+    formal BOOLEAN NOT NULL DEFAULT false,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_language
+        FOREIGN KEY(language_id)
+        REFERENCES languages(id)
+        ON DELETE CASCADE
+);
+```
+
+## Testing Strategy
+
+The application includes three levels of testing:
+
+### Unit Tests
+- Test individual components in isolation
+- Use mocking for dependencies
+- Fast execution
+
+### Integration Tests
+- Test feature slices with real database (Testcontainers)
+- Verify data persistence and retrieval
+- Test repository implementations
+
+### E2E Tests
+- Test complete workflows through HTTP API
+- Verify referential integrity
+- Test realistic user scenarios
+
+## Logging and Observability
+
+### Structured Logging with Serilog
+All handlers include appropriate logging:
+```csharp
+logger.LogInformation("Creating language with code {LanguageCode}", request.Code);
+```
+
+### OpenTelemetry Tracing
+Automatic instrumentation for:
+- HTTP requests/responses
+- Database queries
+- External service calls
+
+## Feature Flags
+
+Microsoft Feature Management is integrated for:
+- Gradual feature rollout
+- A/B testing
+- Emergency feature toggles
+
+Add flags in `appsettings.json`:
+```json
+{
+  "FeatureManagement": {
+    "NewFeature": true
+  }
+}
+```
+
+## Next Steps
+
+- Explore the [Languages Feature](/features/languages)
+- Check the [API Reference](/api-reference/languages)

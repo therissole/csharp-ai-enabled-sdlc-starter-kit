@@ -1,0 +1,204 @@
+---
+title: Languages API
+description: 'CRUD operations for languages'
+---
+
+# Languages API
+
+Manage languages in the system with full CRUD operations.
+
+## GET /api/languages
+
+Retrieve all languages.
+
+### Response
+
+Returns an array of language objects.
+
+### Example Response
+
+```json
+[
+  {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "name": "English",
+    "code": "en",
+    "createdAt": "2024-01-15T10:00:00Z",
+    "updatedAt": "2024-01-15T10:00:00Z"
+  },
+  {
+    "id": "7fb12a51-8934-4a12-9d5f-1f876c59e421",
+    "name": "Spanish",
+    "code": "es",
+    "createdAt": "2024-01-15T10:15:00Z",
+    "updatedAt": "2024-01-15T10:15:00Z"
+  }
+]
+```
+
+### Example Request
+
+```bash
+curl http://localhost:8080/api/languages
+```
+
+---
+
+## GET /api/languages/{id}
+
+Retrieve a specific language by ID.
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+  UUID of the language
+</ParamField>
+
+### Response
+
+Returns a single language object.
+
+### Example Response
+
+```json
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "name": "English",
+  "code": "en",
+  "createdAt": "2024-01-15T10:00:00Z",
+  "updatedAt": "2024-01-15T10:00:00Z"
+}
+```
+
+### Status Codes
+
+- `200 OK` - Language found
+- `404 Not Found` - Language not found
+
+### Example Request
+
+```bash
+curl http://localhost:8080/api/languages/3fa85f64-5717-4562-b3fc-2c963f66afa6
+```
+
+---
+
+## POST /api/languages
+
+Create a new language.
+
+### Request Body
+
+<ParamField body="name" type="string" required>
+  Human-readable name of the language (e.g., "French")
+</ParamField>
+
+<ParamField body="code" type="string" required>
+  ISO language code (e.g., "fr")
+</ParamField>
+
+### Example Request
+
+```bash
+curl -X POST http://localhost:8080/api/languages \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "French",
+    "code": "fr"
+  }'
+```
+
+### Response
+
+Returns the created language object.
+
+### Example Response
+
+```json
+{
+  "id": "9ab12c34-5678-90de-f123-456789abcdef",
+  "name": "French",
+  "code": "fr",
+  "createdAt": "2024-01-15T11:00:00Z",
+  "updatedAt": "2024-01-15T11:00:00Z"
+}
+```
+
+### Status Codes
+
+- `201 Created` - Language created successfully
+- `400 Bad Request` - Invalid request (missing fields or duplicate code)
+
+---
+
+## PUT /api/languages/{id}
+
+Update an existing language.
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+  UUID of the language to update
+</ParamField>
+
+### Request Body
+
+<ParamField body="name" type="string" required>
+  Updated name of the language
+</ParamField>
+
+<ParamField body="code" type="string" required>
+  Updated language code
+</ParamField>
+
+### Example Request
+
+```bash
+curl -X PUT http://localhost:8080/api/languages/3fa85f64-5717-4562-b3fc-2c963f66afa6 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "English (US)",
+    "code": "en"
+  }'
+```
+
+### Response
+
+Returns the updated language object.
+
+### Status Codes
+
+- `200 OK` - Language updated successfully
+- `404 Not Found` - Language not found
+- `400 Bad Request` - Invalid request
+
+---
+
+## DELETE /api/languages/{id}
+
+Delete a language.
+
+<Warning>
+  Deleting a language will cascade delete all associated greetings.
+</Warning>
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+  UUID of the language to delete
+</ParamField>
+
+### Example Request
+
+```bash
+curl -X DELETE http://localhost:8080/api/languages/3fa85f64-5717-4562-b3fc-2c963f66afa6
+```
+
+### Response
+
+No content returned on success.
+
+### Status Codes
+
+- `204 No Content` - Language deleted successfully
+- `404 Not Found` - Language not found
