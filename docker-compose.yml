@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:16-alpine
+    image: postgres:18-alpine
     container_name: starterkit-postgres
     environment:
       POSTGRES_DB: starterkit
@@ -17,7 +17,7 @@ services:
       retries: 5
 
   flyway:
-    image: flyway/flyway:10-alpine
+    image: flyway/flyway:latest
     container_name: starterkit-flyway
     command: migrate
     volumes:
